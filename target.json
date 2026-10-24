@@ -1,0 +1,11 @@
+{
+    "include": [
+        {
+            "keyboard": "30kpd",
+            "keymap": "vial",
+            "target": "uf2",
+            "flags": "EXTRAFLAGS=\"-DAUTO_KDK_TRACKPAD_IQS7211E_ENABLED\"",
+            "name": "30kpd_vial"
+        }
+    ]
+}
