@@ -7,3 +7,11 @@ void keyboard_post_init_user(void) {
     debug_enable = true;
     uprintf("TEST: keyboard_post_init_user reached\n");
 }
+
+#include "print.h"
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    uprintf("KEY TEST: keycode=%u pressed=%u\n",
+            keycode, record->event.pressed);
+    return true;
+}
