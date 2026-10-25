@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef AUTO_KDK_TRACKPAD_IQS7211E_ENABLED
 
+#include "print.h"
 #include "azoteq_iqs7211e.h"
 #include "pointing_device_internal.h"
 #include "wait.h"
@@ -750,7 +751,9 @@ report_mouse_t azoteq_iqs7211e_get_report(report_mouse_t mouse_report) {
 }
 
 void pointing_device_driver_init(void) {
+    uprintf("TEST: pointing_device_driver_init called\n");
     azoteq_iqs7211e_init();
+    uprintf("TEST: IQS7211E init returned\n");
 }
 
 report_mouse_t pointing_device_driver_get_report(report_mouse_t mouse_report) {
