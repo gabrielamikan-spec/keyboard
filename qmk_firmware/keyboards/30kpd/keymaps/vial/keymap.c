@@ -13,3 +13,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             keycode, record->event.pressed);
     return true;
 }
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    static bool logged = false;
+
+    if (!logged) {
+        uprintf("TEST: pointing_device_task_user called\n");
+        logged = true;
+    }
+
+    return mouse_report;
+}
