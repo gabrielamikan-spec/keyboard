@@ -11,7 +11,14 @@ void pointing_device_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         uprintf("KEY TEST: keycode=%u\n", keycode);
+
+        if (keycode == KC_F12) {
+            uprintf("TEST: manual pointing_device_init START\n");
+            pointing_device_init();
+            uprintf("TEST: manual pointing_device_init END\n");
+        }
     }
+
     return true;
 }
 
