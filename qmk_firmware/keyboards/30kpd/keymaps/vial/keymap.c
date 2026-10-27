@@ -1,3 +1,4 @@
+#include "debug.h"
 #include QMK_KEYBOARD_H
 #include "pointing_device.h"
 #include "print.h"
