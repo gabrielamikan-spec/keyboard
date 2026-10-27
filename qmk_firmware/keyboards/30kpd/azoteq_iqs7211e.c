@@ -507,9 +507,9 @@ void azoteq_iqs7211e_init(void) {
     if (AZOTEQ_IQS7211E_RDY_PIN != NO_PIN) {
         setPinInputHigh(AZOTEQ_IQS7211E_RDY_PIN);
         azoteq_iqs7211e_use_ready_pin = true;
-uprintf("IQS TEST 3: RDY pin=%u level=%d\n",
+uprintf("IQS TEST 3: RDY pin=%u level=%u\n",
         (unsigned int)AZOTEQ_IQS7211E_RDY_PIN,
-        gpio_get(AZOTEQ_IQS7211E_RDY_PIN));
+        (unsigned int)readPin(AZOTEQ_IQS7211E_RDY_PIN));
     } else {
         azoteq_iqs7211e_use_ready_pin = false;
         uprintf("IQS TEST 3: no RDY pin\n");
