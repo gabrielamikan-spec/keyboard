@@ -9,8 +9,10 @@ void pointing_device_init_user(void) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    uprintf("KEY TEST: keycode=%u pressed=%u\n",
-            keycode, record->event.pressed);
+    if (record->event.pressed) {
+        uprintf("KEY TEST: keycode=%u\n", keycode);
+        uprintf("POINTING STATUS: %d\n", (int)pointing_device_get_status());
+    }
     return true;
 }
 
@@ -25,11 +27,3 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     return mouse_report;
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
-        uprintf("KEY TEST: keycode=%u\n", keycode);
-        uprintf("POINTING STATUS: %d\n", (int)pointing_device_get_status());
-    }
-
-    return true;
-}
