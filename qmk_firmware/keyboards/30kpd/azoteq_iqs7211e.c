@@ -751,9 +751,13 @@ report_mouse_t azoteq_iqs7211e_get_report(report_mouse_t mouse_report) {
 }
 
 void pointing_device_driver_init(void) {
-    uprintf("TEST: pointing_device_driver_init called\n");
+    uprintf("TEST: driver init START\n");
+
     azoteq_iqs7211e_init();
-    uprintf("TEST: IQS7211E init returned\n");
+
+    uprintf("TEST: driver init END\n");
+
+    // 初期化結果を取得するための診断関数を追加する予定
 }
 
 report_mouse_t pointing_device_driver_get_report(report_mouse_t mouse_report) {
