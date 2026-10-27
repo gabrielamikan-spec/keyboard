@@ -14,6 +14,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         uprintf("KEY TEST: keycode=%u\n", keycode);
 
         if (keycode == KC_F12) {
+            debug_enable = true;
+
             uprintf("TEST: manual pointing_device_init START\n");
             pointing_device_init();
             uprintf("TEST: manual pointing_device_init END\n");
