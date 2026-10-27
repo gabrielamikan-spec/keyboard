@@ -497,82 +497,93 @@ bool azoteq_iqs7211e_read_ati_active(void) {
     return true; // Assume ATI is active if we can't read
 }
 
-void azoteq_iqs7211e_init(void) {
-    i2c_init();
 
-    // Initialize RDY pin if configured
+void azoteq_iqs7211e_init(void) {
+    uprintf("IQS TEST 1: init entered\n");
+
+    i2c_init();
+    uprintf("IQS TEST 2: i2c_init done\n");
+
     if (AZOTEQ_IQS7211E_RDY_PIN != NO_PIN) {
         setPinInputHigh(AZOTEQ_IQS7211E_RDY_PIN);
         azoteq_iqs7211e_use_ready_pin = true;
-        dprintf("IQS7211E: RDY pin configured on pin %d\n", AZOTEQ_IQS7211E_RDY_PIN);
+        uprintf("IQS TEST 3: RDY pin=%d level=%d\n",
+                AZOTEQ_IQS7211E_RDY_PIN,
+                readPin(AZOTEQ_IQS7211E_RDY_PIN));
     } else {
         azoteq_iqs7211e_use_ready_pin = false;
-        dprintf("IQS7211E: No RDY pin configured\n");
+        uprintf("IQS TEST 3: no RDY pin\n");
     }
 
-    debug_enable = true;
-    dprintf("IQS7211E: Initialization started\n");
-
-    // Wait for device to be ready
     azoteq_iqs7211e_wait_for_ready(100);
+    uprintf("IQS TEST 4: before reset\n");
 
-    // Software reset
-    azoteq_iqs7211e_reset_suspend(true, false);
+    i2c_status_t reset_status =
+        azoteq_iqs7211e_reset_suspend(true, false);
+    uprintf("IQS TEST 5: reset status=%d\n", reset_status);
+
     wait_ms(50);
-
-    // Wait for device to be ready after reset
     azoteq_iqs7211e_wait_for_ready(200);
 
-    // Check product number
-    if (azoteq_iqs7211e_get_product() == AZOTEQ_IQS7211E_PRODUCT_NUM) {
-        dprintf("IQS7211E: Device found\n");
+    uint16_t product = azoteq_iqs7211e_get_product();
+    uprintf("IQS TEST 6: product=0x%04X expected=0x%04X\n",
+            product, AZOTEQ_IQS7211E_PRODUCT_NUM);
 
-        // Check if reset occurred
-        if (azoteq_iqs7211e_check_reset() == I2C_STATUS_SUCCESS) {
-            dprintf("IQS7211E: Reset event confirmed\n");
-
-            // Write all settings from init file
-            azoteq_iqs7211e_init_status = azoteq_iqs7211e_write_memory_map();
-
-            if (azoteq_iqs7211e_init_status == I2C_STATUS_SUCCESS) {
-                // Acknowledge reset
-                azoteq_iqs7211e_init_status |= azoteq_iqs7211e_acknowledge_reset();
-                wait_ms(100);
-
-                // Run ATI
-                azoteq_iqs7211e_init_status |= azoteq_iqs7211e_reati();
-
-                // Wait for ATI to complete
-                int ati_timeout = 30; // 1000 * 10ms = 10 second timeout
-                while (azoteq_iqs7211e_read_ati_active() && ati_timeout > 0) {
-                    wait_ms(5);
-                    ati_timeout--;
-                }
-
-                if (ati_timeout >= 0) {
-                    dprintf("IQS7211E: ATI completed\n");
-
-                    // Wait for device to be ready before setting event mode
-                    azoteq_iqs7211e_wait_for_ready(500);
-
-                    // Set event mode
-                    azoteq_iqs7211e_init_status |= azoteq_iqs7211e_set_event_mode(true);
-
-                    wait_ms(ACTIVE_MODE_REPORT_RATE_0 + 1);
-
-                    dprintf("IQS7211E: Init complete, status: %d\n", azoteq_iqs7211e_init_status);
-                } else {
-                    dprintf("IQS7211E: ATI timeout\n");
-                }
-            } else {
-                dprintf("IQS7211E: Memory map write failed\n");
-            }
-        } else {
-            dprintf("IQS7211E: No reset event detected\n");
-        }
-    } else {
-        dprintf("IQS7211E: Device not found\n");
+    if (product != AZOTEQ_IQS7211E_PRODUCT_NUM) {
+        uprintf("IQS ERROR: product mismatch\n");
+        return;
     }
+
+    i2c_status_t reset_check = azoteq_iqs7211e_check_reset();
+    uprintf("IQS TEST 7: reset check=%d\n", reset_check);
+
+    if (reset_check != I2C_STATUS_SUCCESS) {
+        uprintf("IQS ERROR: reset event not detected\n");
+        return;
+    }
+
+    azoteq_iqs7211e_init_status = azoteq_iqs7211e_write_memory_map();
+    uprintf("IQS TEST 8: memory map status=%d\n",
+            azoteq_iqs7211e_init_status);
+
+    if (azoteq_iqs7211e_init_status != I2C_STATUS_SUCCESS) {
+        uprintf("IQS ERROR: memory map write failed\n");
+        return;
+    }
+
+    azoteq_iqs7211e_init_status |= azoteq_iqs7211e_acknowledge_reset();
+    uprintf("IQS TEST 9: acknowledge status=%d\n",
+            azoteq_iqs7211e_init_status);
+    wait_ms(100);
+
+    azoteq_iqs7211e_init_status |= azoteq_iqs7211e_reati();
+    uprintf("IQS TEST 10: re-ATI status=%d\n",
+            azoteq_iqs7211e_init_status);
+
+    int ati_timeout = 30;
+    while (azoteq_iqs7211e_read_ati_active() && ati_timeout > 0) {
+        wait_ms(5);
+        ati_timeout--;
+    }
+
+    uprintf("IQS TEST 11: ATI remaining=%d\n", ati_timeout);
+
+    if (ati_timeout == 0) {
+        uprintf("IQS ERROR: ATI timeout\n");
+        azoteq_iqs7211e_init_status = I2C_STATUS_ERROR;
+        return;
+    }
+
+    azoteq_iqs7211e_wait_for_ready(500);
+
+    azoteq_iqs7211e_init_status |= azoteq_iqs7211e_set_event_mode(true);
+    uprintf("IQS TEST 12: event mode status=%d\n",
+            azoteq_iqs7211e_init_status);
+
+    wait_ms(ACTIVE_MODE_REPORT_RATE_0 + 1);
+
+    uprintf("IQS TEST 13: init finished, status=%d\n",
+            azoteq_iqs7211e_init_status);
 }
 
 report_mouse_t azoteq_iqs7211e_get_report(report_mouse_t mouse_report) {
