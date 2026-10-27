@@ -11,7 +11,6 @@ void pointing_device_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         uprintf("KEY TEST: keycode=%u\n", keycode);
-        uprintf("POINTING STATUS: %d\n", (int)pointing_device_get_status());
     }
     return true;
 }
