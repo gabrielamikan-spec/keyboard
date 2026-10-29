@@ -102,6 +102,13 @@ i2c_status_t azoteq_iqs7211e_reset_suspend(bool reset, bool suspend) {
     uint8_t      transferBytes[2];
     i2c_status_t status = i2c_read_register(AZOTEQ_IQS7211E_ADDRESS, IQS7211E_MM_SYS_CONTROL, transferBytes, 2, AZOTEQ_IQS7211E_TIMEOUT_MS);
 
+    uprintf(
+    "IQS DIAG: reset read status=%d, address=0x%02X, reg=0x%02X\n",
+    (int)status,
+    (unsigned int)AZOTEQ_IQS7211E_ADDRESS,
+    (unsigned int)IQS7211E_MM_SYS_CONTROL
+);
+    
     if (status == I2C_STATUS_SUCCESS) {
         if (reset) {
             transferBytes[1] |= (1 << IQS7211E_SW_RESET_BIT);
