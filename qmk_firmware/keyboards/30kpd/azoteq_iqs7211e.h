@@ -22,15 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pointing_device.h"
 
 #ifndef AZOTEQ_IQS7211E_ADDRESS
-#    define AZOTEQ_IQS7211E_ADDRESS (0x56 << 1)
+#define AZOTEQ_IQS7211E_ADDRESS 0x56
 #endif
 
 #ifndef AZOTEQ_IQS7211E_TIMEOUT_MS
-#    define AZOTEQ_IQS7211E_TIMEOUT_MS 100
+#define AZOTEQ_IQS7211E_TIMEOUT_MS 100
 #endif
 
 #ifndef AZOTEQ_IQS7211E_RDY_PIN
-#    define AZOTEQ_IQS7211E_RDY_PIN 21
+#define AZOTEQ_IQS7211E_RDY_PIN 21
 #endif
 
 // Product number
