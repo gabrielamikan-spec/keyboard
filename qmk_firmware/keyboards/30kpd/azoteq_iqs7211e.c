@@ -171,6 +171,13 @@ uint16_t azoteq_iqs7211e_get_product(void) {
     uint8_t      transferBytes[2];
     i2c_status_t status = i2c_read_register(AZOTEQ_IQS7211E_ADDRESS, IQS7211E_MM_PROD_NUM, transferBytes, 2, AZOTEQ_IQS7211E_TIMEOUT_MS);
 
+uprintf(
+    "IQS DIAG: product read status=%d, address=0x%02X, reg=0x%02X\n",
+    (int)status,
+    (unsigned int)AZOTEQ_IQS7211E_ADDRESS,
+    (unsigned int)IQS7211E_MM_PROD_NUM
+);
+    
     if (status == I2C_STATUS_SUCCESS) {
         azoteq_iqs7211e_product_number = transferBytes[0] | (transferBytes[1] << 8);
     }
