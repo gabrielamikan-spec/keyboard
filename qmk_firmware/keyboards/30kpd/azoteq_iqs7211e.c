@@ -1,19 +1,3 @@
-/*
-Copyright 2025 sekigon (@sekigon-gonnoc)
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
 
 #ifdef AUTO_KDK_TRACKPAD_IQS7211E_ENABLED
 
@@ -99,42 +83,37 @@ i2c_status_t azoteq_iqs7211e_get_base_data(azoteq_iqs7211e_base_data_t *base_dat
 }
 
 i2c_status_t azoteq_iqs7211e_reset_suspend(bool reset, bool suspend) {
-    uint8_t transferBytes[2] = {0, 0};
 
-    uprintf("IQS TEST: before I2C read\n");
+uint8_t reg = IQS7211E_MM_SYS_CONTROL;
+uint8_t transferBytes[2] = {0, 0};
 
-    i2c_status_t status = i2c_read_register(
+i2c_status_t tx_status = i2c_transmit(
+    AZOTEQ_IQS7211E_ADDRESS,
+    &reg,
+    1,
+    AZOTEQ_IQS7211E_TIMEOUT_MS
+);
+
+uprintf("IQS TEST: TX status=%d\n", (int)tx_status);
+
+i2c_status_t rx_status = I2C_STATUS_ERROR;
+
+if (tx_status == I2C_STATUS_SUCCESS) {
+    rx_status = i2c_receive(
         AZOTEQ_IQS7211E_ADDRESS,
-        IQS7211E_MM_SYS_CONTROL,
         transferBytes,
         2,
         AZOTEQ_IQS7211E_TIMEOUT_MS
     );
+}
 
-    uprintf(
-        "IQS TEST: read status=%d, data=%02X %02X\n",
-        (int)status,
-        transferBytes[0],
-        transferBytes[1]
-    );
+uprintf(
+    "IQS TEST: RX status=%d data=%02X %02X\n",
+    (int)rx_status,
+    transferBytes[0],
+    transferBytes[1]
+);
 
-    if (status == I2C_STATUS_SUCCESS) {
-        if (reset) {
-            transferBytes[1] |= (1 << IQS7211E_SW_RESET_BIT);
-        }
-
-        status = i2c_write_register(
-            AZOTEQ_IQS7211E_ADDRESS,
-            IQS7211E_MM_SYS_CONTROL,
-            transferBytes,
-            2,
-            AZOTEQ_IQS7211E_TIMEOUT_MS
-        );
-
-        uprintf("IQS TEST: write status=%d\n", (int)status);
-    }
-
-    return status;
 }
 
 i2c_status_t azoteq_iqs7211e_set_event_mode(bool enabled) {
