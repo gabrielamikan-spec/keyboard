@@ -113,7 +113,9 @@ uprintf(
     transferBytes[0],
     transferBytes[1]
 );
-
+    
+    return rx_status;
+    
 }
 
 i2c_status_t azoteq_iqs7211e_set_event_mode(bool enabled) {
