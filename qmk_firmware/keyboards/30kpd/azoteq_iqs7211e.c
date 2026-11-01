@@ -99,21 +99,39 @@ i2c_status_t azoteq_iqs7211e_get_base_data(azoteq_iqs7211e_base_data_t *base_dat
 }
 
 i2c_status_t azoteq_iqs7211e_reset_suspend(bool reset, bool suspend) {
-    uint8_t      transferBytes[2];
-    i2c_status_t status = i2c_read_register(AZOTEQ_IQS7211E_ADDRESS, IQS7211E_MM_SYS_CONTROL, transferBytes, 2, AZOTEQ_IQS7211E_TIMEOUT_MS);
+    uint8_t transferBytes[2] = {0, 0};
+
+    uprintf("IQS TEST: before I2C read\n");
+
+    i2c_status_t status = i2c_read_register(
+        AZOTEQ_IQS7211E_ADDRESS,
+        IQS7211E_MM_SYS_CONTROL,
+        transferBytes,
+        2,
+        AZOTEQ_IQS7211E_TIMEOUT_MS
+    );
 
     uprintf(
-    "IQS DIAG: reset read status=%d, address=0x%02X, reg=0x%02X\n",
-    (int)status,
-    (unsigned int)AZOTEQ_IQS7211E_ADDRESS,
-    (unsigned int)IQS7211E_MM_SYS_CONTROL
-);
-    
+        "IQS TEST: read status=%d, data=%02X %02X\n",
+        (int)status,
+        transferBytes[0],
+        transferBytes[1]
+    );
+
     if (status == I2C_STATUS_SUCCESS) {
         if (reset) {
             transferBytes[1] |= (1 << IQS7211E_SW_RESET_BIT);
         }
-        status = i2c_write_register(AZOTEQ_IQS7211E_ADDRESS, IQS7211E_MM_SYS_CONTROL, transferBytes, 2, AZOTEQ_IQS7211E_TIMEOUT_MS);
+
+        status = i2c_write_register(
+            AZOTEQ_IQS7211E_ADDRESS,
+            IQS7211E_MM_SYS_CONTROL,
+            transferBytes,
+            2,
+            AZOTEQ_IQS7211E_TIMEOUT_MS
+        );
+
+        uprintf("IQS TEST: write status=%d\n", (int)status);
     }
 
     return status;
