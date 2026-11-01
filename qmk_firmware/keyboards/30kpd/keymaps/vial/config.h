@@ -13,5 +13,5 @@
 
 #define AZOTEQ_IQS7211E_RDY_PIN GP21
 
-#define RP_I2C_USE_I2C1 TRUE
+
 
