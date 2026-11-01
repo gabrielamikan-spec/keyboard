@@ -99,7 +99,7 @@ i2c_status_t azoteq_iqs7211e_get_base_data(azoteq_iqs7211e_base_data_t *base_dat
 }
 
 i2c_status_t azoteq_iqs7211e_reset_suspend(bool reset, bool suspend) {
-    uint8_t reg = IQS7211E_MM_SYS_CONTROL;
+uint8_t reg = IQS7211E_MM_SYS_CONTROL;
 uint8_t transferBytes[2] = {0, 0};
 
 i2c_status_t tx_status = i2c_transmit(
@@ -120,7 +120,7 @@ if (tx_status == I2C_STATUS_SUCCESS) {
         2,
         AZOTEQ_IQS7211E_TIMEOUT_MS
     );
-}
+
 
 uprintf(
     "IQS TEST: RX status=%d data=%02X %02X\n",
@@ -128,6 +128,7 @@ uprintf(
     transferBytes[0],
     transferBytes[1]
 );
+
 
     uprintf(
         "IQS TEST: read status=%d, data=%02X %02X\n",
