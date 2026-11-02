@@ -8,3 +8,5 @@ SRC += azoteq_iqs7211e.c
 I2C_DRIVER_REQUIRED = yes
 
 CONSOLE_ENABLE = yes
+
+OPT_DEFS += -DHAL_USE_I2C=TRUE
