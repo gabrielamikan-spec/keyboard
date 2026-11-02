@@ -10,6 +10,10 @@
 #include "gpio.h"
 #include "timer.h"
 #include <stdlib.h>
+#include <ch.h>
+#include <hal.h>
+
+
 
 const pointing_device_driver_t azoteq_iqs7211e_pointing_device_driver = {
     .init       = azoteq_iqs7211e_init,
